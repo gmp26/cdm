@@ -1,0 +1,19 @@
+.embed {
+	width:50%;
+	font-size:75%;
+	float:right;
+	border: 1px solid #CCC;
+	padding:20px;
+	margin-left:20px;
+	margin-bottom:20px;
+	max-height:400px;
+	overflow:auto;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	background-color:#FFFAEC;
+}
+.embed h2 {
+	padding-left:20px;
+	color: #FA7;
+}

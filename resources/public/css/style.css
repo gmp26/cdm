@@ -1,0 +1,35 @@
+.light {
+    width: 50%;
+    margin: 0 0;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 50%;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-color: black;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.round {
+    border-radius: 50%;
+    margin: 0% auto 0% auto;
+    box-sizing: border-box;
+    position:absolute;
+}
+.green-off {
+    background-image: url("../assets/green-off.png");
+}
+.red {
+    background-image: url("../assets/red.png");
+}
+.red-off {
+    background-image: url("../assets/red-off.png");
+}
+.blueish {
+    background-image: url("../assets/blue.png");
+}
+.blue-off {
+    background-image: url("../assets/blue-off.png");
+}
