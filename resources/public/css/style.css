@@ -17,19 +17,5 @@
     margin: 0% auto 0% auto;
     box-sizing: border-box;
     position:absolute;
-}
-.green-off {
-    background-image: url("../assets/green-off.png");
-}
-.red {
-    background-image: url("../assets/red.png");
-}
-.red-off {
-    background-image: url("../assets/red-off.png");
-}
-.blueish {
-    background-image: url("../assets/blue.png");
-}
-.blue-off {
-    background-image: url("../assets/blue-off.png");
+    box-shadow: inset 5em 1em rgba(255,255,0,0.3);
 }

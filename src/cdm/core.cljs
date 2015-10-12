@@ -28,7 +28,18 @@
 
 (rum/defc centre-round [color percent & content]
   (let [half (/ (- 100 percent) 2)]
-    [:.round {:style {:background-color color
+    [:.round {:style {:box-shadow (str "inset 5em 1em rgba(255,255,0,0.3)")
+                      :background-color color
+                      :width (pc percent)
+                      :padding-bottom (pc percent)
+                      :top (pc  half)
+                      :left (pc  half)}}
+     content]))
+
+(rum/defc centre-round-off [color percent & content]
+  (let [half (/ (- 100 percent) 2)]
+    [:.round {:style {:box-shadow (str "inset 1em 5em rgba(0,0,0,0.3)")
+                      :background-color color
                       :width (pc percent)
                       :padding-bottom (pc percent)
                       :top (pc  half)
@@ -40,16 +51,16 @@
   (if on
     (->> (centre-round "#ff6644" 80)
          (centre-round "#ffffcc" 20)
-         (centre-round "#ff6600" 95)
+         (centre-round "#ffbbdd" 95)
          (centre-round "#ff0000" 95)
          (centre-round "#cc0000" 95)
          (centre-round "#880044" 95))
-    (->> (centre-round "#882222" 80)
-         (centre-round "#884422" 20)
-         (centre-round "#884444" 95)
-         (centre-round "#884400" 95)
-         (centre-round "#880000" 95)
-         (centre-round "#880000" 95))))
+    (->> (centre-round-off "#882222" 80)
+         (centre-round-off "#884422" 20)
+         (centre-round-off "#AA4444" 95)
+         (centre-round-off "#884400" 95)
+         (centre-round-off "#880000" 95)
+         (centre-round-off "#880000" 95))))
 
 (rum/defc yellow-light [on]
   (if on
@@ -59,42 +70,42 @@
          (centre-round "#ffff00" 95)
          (centre-round "#dddd00" 95)
          (centre-round "#aaaa44" 95))
-    (->> (centre-round "#222288" 10)
-         (centre-round "#224488" 90)
-         (centre-round "#444488" 95)
-         (centre-round "#004488" 95)
-         (centre-round "#000088" 95)
-         (centre-round "#000088" 95))))
+    (->> (centre-round-off "#888800" 80)
+         (centre-round-off "#668844" 20)
+         (centre-round-off "#aa8800" 95)
+         (centre-round-off "#887700" 95)
+         (centre-round-off "#666600" 95)
+         (centre-round-off "#444400" 95))))
 
 (rum/defc green-light [on]
   (if on
-    (->> (centre-round "#ccccff" 10)
-         (centre-round "#44ffff" 90)
-         (centre-round "#ccffff" 95)
-         (centre-round "#00ffff" 95)
-         (centre-round "#0000ff" 95)
-         (centre-round "#000088" 95))
-    (->> (centre-round "#222288" 10)
-         (centre-round "#224488" 90)
-         (centre-round "#444488" 95)
-         (centre-round "#004488" 95)
-         (centre-round "#000088" 95)
-         (centre-round "#000088" 95))))
+    (->> (centre-round "#ccffcc" 80)
+         (centre-round "#44ffff" 20)
+         (centre-round "#ccffee" 95)
+         (centre-round "#00ffbb" 95)
+         (centre-round "#00ff00" 95)
+         (centre-round "#008800" 95))
+    (->> (centre-round-off "#228822" 80)
+         (centre-round-off "#228844" 20)
+         (centre-round-off "#448844" 95)
+         (centre-round-off "#008844" 95)
+         (centre-round-off "#008800" 95)
+         (centre-round-off "#00aa00" 95))))
 
 (rum/defc blue-light [on]
   (if on
-    (->> (centre-round "#ccccff" 10)
-         (centre-round "#44ffff" 90)
-         (centre-round "#ccffff" 95)
+    (->> (centre-round "#ccccff" 80)
+         (centre-round "#44ffff" 20)
+         (centre-round "#cceeff" 95)
          (centre-round "#00ffff" 95)
          (centre-round "#0000ff" 95)
          (centre-round "#000088" 95))
-    (->> (centre-round "#222288" 10)
-         (centre-round "#224488" 90)
-         (centre-round "#444488" 95)
-         (centre-round "#004488" 95)
-         (centre-round "#000088" 95)
-         (centre-round "#000088" 95))))
+    (->> (centre-round-off "#222288" 80)
+         (centre-round-off "#224488" 20)
+         (centre-round-off "#444488" 95)
+         (centre-round-off "#004488" 95)
+         (centre-round-off "#000088" 95)
+         (centre-round-off "#000088" 95))))
 ;;
 ;; Put the app/game in here
 ;;
@@ -102,16 +113,16 @@
   [:.col-md-12
    [:.box.row
     [:.col-md-6.light
-     (red-light true)]
+     (red-light false)]
     [:.col-md-6.light
-     (yellow-light true)]
+     (yellow-light false)]
     ]
    [:.box.row
     [:.col-md-6.light
-     (green-light true)
+     (green-light false)
      ]
     [:.col-md-6.light
-     (blue-light true)
+     (blue-light false)
      ]
     ]
    ])
