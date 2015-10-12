@@ -26,10 +26,10 @@
 
 (defn pc [n] (str (.toFixed n 2) "%"))
 
-(rum/defc centre-round [color percent & content]
+(rum/defc centre-round [switched-on color percent & content]
   (let [half (/ (- 100 percent) 2)]
-    [:.round {:style {:box-shadow (str "inset 5em 1em rgba(255,255,0,0.3)")
-                      :background-color color
+    [:.round {:class (name switched-on)
+              :style {:background-color color
                       :width (pc percent)
                       :padding-bottom (pc percent)
                       :top (pc  half)
@@ -46,66 +46,103 @@
                       :left (pc  half)}}
      content]))
 
+(comment
+  (def light-shades
+    {
+     :red [{:on "#ff0000" :off "#882222" :pc 80}
+           {:on "#ffaaff" :off "#884422" :pc 20}
+           {:on "#ff7777" :off "#AA4444" :pc 95}
+           {:on "#ff0000" :off "#884400" :pc 95}
+           {:on "#cc0000" :off "#880000" :pc 95}
+           {:on "#880044" :off "#880000" :pc 95}]
+     :yellow [{:on "#ff0000" :off "#882222" :pc 80}
+              {:on "#ffaaff" :off "#884422" :pc 20}
+              {:on "#ff7777" :off "#AA4444" :pc 95}
+              {:on "#ff0000" :off "#884400" :pc 95}
+              {:on "#cc0000" :off "#880000" :pc 95}
+              {:on "#880044" :off "#880000" :pc 95}]
+     :green [{:on "#ff0000" :off "#882222" :pc 80}
+             {:on "#ffaaff" :off "#884422" :pc 20}
+             {:on "#ff7777" :off "#AA4444" :pc 95}
+             {:on "#ff0000" :off "#884400" :pc 95}
+             {:on "#cc0000" :off "#880000" :pc 95}
+             {:on "#880044" :off "#880000" :pc 95}]
+     :blue [{:on "#ff0000" :off "#882222" :pc 80}
+            {:on "#ffaaff" :off "#884422" :pc 20}
+            {:on "#ff7777" :off "#AA4444" :pc 95}
+            {:on "#ff0000" :off "#884400" :pc 95}
+            {:on "#cc0000" :off "#880000" :pc 95}
+            {:on "#880044" :off "#880000" :pc 95}]
+     })
 
-(rum/defc red-light [on]
-  (if on
-    (->> (centre-round "#ff6644" 80)
-         (centre-round "#ffffcc" 20)
-         (centre-round "#ffbbdd" 95)
-         (centre-round "#ff0000" 95)
-         (centre-round "#cc0000" 95)
-         (centre-round "#880044" 95))
-    (->> (centre-round-off "#882222" 80)
-         (centre-round-off "#884422" 20)
-         (centre-round-off "#AA4444" 95)
-         (centre-round-off "#884400" 95)
-         (centre-round-off "#880000" 95)
-         (centre-round-off "#880000" 95))))
+  (rum/defc red-light [switch]
+    (let [shade-data #(nth (:red light-shades) %)
+          shades #(switch (shade-data %))
+          pc #(pc (shade-data %))
+          disc #(centre-round switch %1 %2)]
 
-(rum/defc yellow-light [on]
-  (if on
-    (->> (centre-round "#ffff00" 80)
-         (centre-round "#ffffff" 20)
-         (centre-round "#ffffcc" 95)
-         (centre-round "#ffff00" 95)
-         (centre-round "#dddd00" 95)
-         (centre-round "#aaaa44" 95))
-    (->> (centre-round-off "#888800" 80)
-         (centre-round-off "#668844" 20)
-         (centre-round-off "#aa8800" 95)
-         (centre-round-off "#887700" 95)
-         (centre-round-off "#666600" 95)
-         (centre-round-off "#444400" 95))))
+      (reduce (:red-light-shades))
+      )))
 
-(rum/defc green-light [on]
-  (if on
-    (->> (centre-round "#ccffcc" 80)
-         (centre-round "#44ffff" 20)
-         (centre-round "#ccffee" 95)
-         (centre-round "#00ffbb" 95)
-         (centre-round "#00ff00" 95)
-         (centre-round "#008800" 95))
-    (->> (centre-round-off "#228822" 80)
-         (centre-round-off "#228844" 20)
-         (centre-round-off "#448844" 95)
-         (centre-round-off "#008844" 95)
-         (centre-round-off "#008800" 95)
-         (centre-round-off "#00aa00" 95))))
+(rum/defc red-light [switch]
+  (if (= switch :on)
+    (->> (centre-round :on  "#ff0000" 80)
+         (centre-round :on  "#ffaaff" 20)
+         (centre-round :on  "#ff7777" 95)
+         (centre-round :on  "#ff0000" 95)
+         (centre-round :on  "#cc0000" 95)
+         (centre-round :on  "#880044" 85))
+    (->> (centre-round :off "#882222" 80)
+         (centre-round :off "#884422" 20)
+         (centre-round :off "#AA4444" 95)
+         (centre-round :off "#884400" 95)
+         (centre-round :off "#880000" 95)
+         (centre-round :off "#880000" 85))))
 
-(rum/defc blue-light [on]
-  (if on
-    (->> (centre-round "#ccccff" 80)
-         (centre-round "#44ffff" 20)
-         (centre-round "#cceeff" 95)
-         (centre-round "#00ffff" 95)
-         (centre-round "#0000ff" 95)
-         (centre-round "#000088" 95))
-    (->> (centre-round-off "#222288" 80)
-         (centre-round-off "#224488" 20)
-         (centre-round-off "#444488" 95)
-         (centre-round-off "#004488" 95)
-         (centre-round-off "#000088" 95)
-         (centre-round-off "#000088" 95))))
+(rum/defc yellow-light [switch]
+  (if (= switch :on)
+    (->> (centre-round :on  "#ffff00" 80)
+         (centre-round :on  "#ffffff" 20)
+         (centre-round :on  "#ffffcc" 95)
+         (centre-round :on  "#ffff00" 95)
+         (centre-round :on  "#dddd00" 95)
+         (centre-round :on  "#aaaa44" 85))
+    (->> (centre-round :off "#888800" 80)
+         (centre-round :off "#668844" 20)
+         (centre-round :off "#aa8800" 95)
+         (centre-round :off "#887700" 95)
+         (centre-round :off "#666600" 95)
+         (centre-round :off "#444400" 85))))
+
+(rum/defc green-light [switch]
+  (if (= switch :on)
+    (->> (centre-round :on  "#55ff55" 80)
+         (centre-round :on  "#bbffff" 20)
+         (centre-round :on  "#aaffaa" 95)
+         (centre-round :on  "#00ff00" 95)
+         (centre-round :on  "#00cc00" 95)
+         (centre-round :on  "#008800" 85))
+    (->> (centre-round :off "#228822" 80)
+         (centre-round :off "#228844" 20)
+         (centre-round :off "#448844" 95)
+         (centre-round :off "#008844" 95)
+         (centre-round :off "#008800" 95)
+         (centre-round :off "#00aa00" 85))))
+
+(rum/defc blue-light [switch]
+  (if (= switch :on)
+    (->> (centre-round :on  "#22bbff" 80)
+         (centre-round :on  "#aaffff" 20)
+         (centre-round :on  "#88eeff" 95)
+         (centre-round :on  "#00aaff" 95)
+         (centre-round :on  "#0000ff" 95)
+         (centre-round :on  "#000088" 85))
+    (->> (centre-round :off "#222288" 80)
+         (centre-round :off "#224488" 20)
+         (centre-round :off "#444488" 95)
+         (centre-round :off "#004488" 95)
+         (centre-round :off "#000088" 95)
+         (centre-round :off "#000088" 85))))
 ;;
 ;; Put the app/game in here
 ;;
@@ -113,16 +150,16 @@
   [:.col-md-12
    [:.box.row
     [:.col-md-6.light
-     (red-light false)]
+     (red-light :on)]
     [:.col-md-6.light
-     (yellow-light false)]
+     (yellow-light :on)]
     ]
    [:.box.row
     [:.col-md-6.light
-     (green-light false)
+     (green-light :off)
      ]
     [:.col-md-6.light
-     (blue-light false)
+     (blue-light :on)
      ]
     ]
    ])

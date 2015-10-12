@@ -17,5 +17,12 @@
     margin: 0% auto 0% auto;
     box-sizing: border-box;
     position:absolute;
+}
+
+.on {
     box-shadow: inset 5em 1em rgba(255,255,0,0.3);
+}
+
+.off {
+    box-shadow: inset 1em 5em rgba(0,0,0,0.3);
 }
