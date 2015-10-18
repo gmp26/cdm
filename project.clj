@@ -7,6 +7,11 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.48"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+                 [cljsjs/react "0.13.3-1"]
+                 [sablono "0.3.6"]
+                 [cljs-react-reload "0.1.1"]
+                 [cljsjs/showdown "0.4.0-1"]
+                 [devcards "0.2.0-3"]
                  [rum "0.5.0"]
                  [jayq "2.5.4"]]
 
@@ -15,10 +20,25 @@
 
   :source-paths ["src"]
 
-  :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
+  :clean-targets ^{:protect false} ["resources/public/js/compiled"
+                                    "resources/public/js/devcards_out"
+                                    "resources/public/js"
+                                    "target"]
 
   :cljsbuild {
-    :builds [{:id "dev"
+    :builds [{:id "devcards"
+              :source-paths ["src"]
+
+              :figwheel {:on-jsload "cdm.core/on-js-reload"
+                         :devcards true}
+
+              :compiler {:main cdm.devcards
+                         :asset-path "js/devcards_out"
+                         :output-to "resources/public/js/cdm_devcards.js"
+                         :output-dir "resources/public/js/devcards_out"
+                         :source-map-timestamp true }}
+
+             {:id "dev"
               :source-paths ["src"]
 
               :figwheel { :on-jsload "cdm.core/on-js-reload" }
@@ -28,6 +48,7 @@
                          :output-to "resources/public/js/compiled/cdm.js"
                          :output-dir "resources/public/js/compiled/out"
                          :source-map-timestamp true }}
+
              {:id "min"
               :source-paths ["src"]
               :compiler {:output-to "resources/public/js/compiled/cdm.js"
@@ -36,9 +57,9 @@
                          :pretty-print false}}]}
 
   :figwheel {
-             ;; :http-server-root "public" ;; default and assumes "resources" 
+             ;; :http-server-root "public" ;; default and assumes "resources"
              ;; :server-port 3449 ;; default
-             ;; :server-ip "127.0.0.1" 
+             ;; :server-ip "127.0.0.1"
 
              :css-dirs ["resources/public/css"] ;; watch and update CSS
 
@@ -64,5 +85,5 @@
              ;; :repl false
 
              ;; to configure a different figwheel logfile path
-             ;; :server-logfile "tmp/logs/figwheel-logfile.log" 
+             ;; :server-logfile "tmp/logs/figwheel-logfile.log"
              })
