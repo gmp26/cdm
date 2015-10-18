@@ -3,9 +3,9 @@
               [cljs.reader :as reader]
               [clojure.set :refer (intersection)]
               [cljsjs.react]
-              [jayq.core :refer ($)]
+              ;[jayq.core :refer ($)]
               )
-    (:require-macros [jayq.macros :refer [ready]])
+    ;(:require-macros [jayq.macros :refer [ready]])
 )
 
 (enable-console-print!)
@@ -167,7 +167,9 @@
 ;;
 ;; mount main component on html game element
 ;;
-(rum/mount (game-container) (el "game"))
+
+(if-let [node (el "game")]
+  (rum/mount (game-container) node))
 
 ;;
 ;; optionally do something on game reload
