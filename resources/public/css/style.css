@@ -24,18 +24,17 @@
     border-radius: 50%;
 }
 
-.round {
-}
-
 .on {
-    box-shadow: inset 0em 10em rgba(240,240,255,0.6);
-    -webkit-filter: blur(5px) brightness(1.3);;
-    filter: blur(5px) brightness(1.3);
+    -webkit-filter: blur(30px) brightness(2);
+    filter: blur(30px) brightness(2);
+    background-color: rgba(255,255,255,1);
 }
 
 .off {
-    box-shadow: inset 0em 100em rgba(0,0,0,0.6);
-}
+    background-color: rgba(0,0,0,0.7);
+    -webkit-filter: blur(40px) brightness(0.3);
+    filter: blur(30px) brightness(0.4);
+ }
 
 .full-square {
     width: 100%;
@@ -43,9 +42,11 @@
     padding: 0 !important;
     padding-bottom: 100% !important;
     position: relative;
+    box-sizing: border-box;
+/*
     background-color: green;
     border: 5px solid green;
-    box-sizing: border-box;
+*/
 }
 
 .quarter-square {
@@ -56,18 +57,45 @@
     bottom: 0;
     display:inline-block;
     background-color: cyan;
-    border: 3px solid cyan;
     box-sizing: border-box;
+/*
+    border: 3px solid cyan;
+*/
 }
 
 .black-square {
     width: 100%;
-        padding: 0 !important;
+    /*padding: 0 !important;*/
     padding-bottom: 100% !important;
     background-color: #000;
     opacity: 0.9;
-    border: 3px solid red;
     box-sizing: border-box;
+    border-radius: 10%;
+/*
+    border: 3px solid red;
+*/
+}
+
+.rel {
+    position: relative;
+}
+.etching {
+    width: 40px;
+    height: 20px;
+    bottom: 52%;
+    left: 44%;
+    color: #fff;
+    text-align: center;
+    font-size: 26px;
+    opacity: 0.5;
+    z-index: 100;
+    position: absolute;
+}
+.etching.etch-on {
+    color: black;
+}
+.etching.etch-off {
+    color: white;
 }
 
 .top {

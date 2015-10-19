@@ -31,15 +31,17 @@
   [:.black-square
    content])
 
-(rum/defc light [light-class]
-  [:div {:class light-class :style {:background-color "white"}}
-   [:div {:class light-class}]])
+(rum/defc light [light-class on-class]
+  [:div
+   [:div {:class light-class}
+    [:div {:class (str on-class " " light-class)}
+     [:.rel]]]
+   [:span.etching {:class (if (= on-class "on") "etch-on" "etch-off")} "40W ECO"]])
 
 (rum/defc coloured-light [class state]
-  (let [spec (str class " " state " lamp round")]
-
+  (let [spec (str class " lamp")]
     (responsive-black-square
-     (light spec)))
+     (light spec state)))
   )
 
 (rum/defc four-lights [[a b c d]]
