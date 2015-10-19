@@ -70,6 +70,10 @@ implementation.
   (t/is (core/linear? -1 0 -1) "k=anything")
   (t/is (core/linear? -31 1 -32) "k=1")
   (t/is (core/linear? 8 -3 2) "k=1")
-  (t/is (not (core/linear? 28 7 6)) "not linear")
+  (t/is (not (core/linear? 28 7 6)) "not linear"))
 
-  )
+(deftest int-in-range
+  "test 100 random integers in range [0,5)"
+  (t/is (every?
+         (fn [j] (and (>= j 0) (< j 5)))
+         (for [i (range 100)] (core/int-in-range 0 5)))))

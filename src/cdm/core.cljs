@@ -32,12 +32,14 @@
    content])
 
 (rum/defc light [light-class]
-  [:div {:class light-class}])
+  [:div {:class light-class :style {:background-color "white"}}
+   [:div {:class light-class}]])
 
 (rum/defc coloured-light [class state]
   (let [spec (str class " " state " lamp round")]
+
     (responsive-black-square
-        (light spec)))
+     (light spec)))
   )
 
 (rum/defc four-lights [[a b c d]]
