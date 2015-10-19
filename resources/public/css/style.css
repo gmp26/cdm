@@ -1,28 +1,95 @@
-.light {
-    width: 50%;
-    margin: 0 0;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 50%;
-    background-size: 100%;
-    background-repeat: no-repeat;
-    background-color: black;
+.yellow {
+    background-color: yellow;
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: green;
+}
+
+.blue {
+    background-color: blue;
+}
+
+.lamp {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    bottom: 10%;
+    right: 10%;
     display: inline-block;
-    vertical-align: middle;
+    border-radius: 50%;
 }
 
 .round {
-    border-radius: 50%;
-    margin: 0% auto 0% auto;
-    box-sizing: border-box;
-    position:absolute;
 }
 
 .on {
-    box-shadow: inset 5em 1em rgba(255,255,255,0.4);
+    box-shadow: inset 0em 10em rgba(240,240,255,0.6);
+    -webkit-filter: blur(5px);
+    filter: blur(5px) brightness(1.3);;
+
 }
 
 .off {
-    box-shadow: inset 1em 5em rgba(0,0,0,0.4);
+    box-shadow: inset 0em 100em rgba(0,0,0,0.6);
+}
+
+.full-square {
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    padding-bottom: 100% !important;
+    position: relative;
+    background-color: green;
+    border: 5px solid green;
+    box-sizing: border-box;
+}
+
+.quarter-square {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display:inline-block;
+    background-color: cyan;
+    border: 3px solid cyan;
+    box-sizing: border-box;
+}
+
+.black-square {
+    width: 100%;
+    /*margin: 0 !important;
+    padding: 0 !important;*/
+    padding-bottom: 100% !important;
+    background-color: #000;
+    opacity: 0.9;
+    border: 3px solid red;
+    box-sizing: border-box;
+}
+
+
+
+.top {
+    top: 0;
+    bottom: 50%;
+}
+
+.left {
+    left: 0;
+    right: 50%;
+}
+
+.right {
+    left: 50%;
+    right: 0;
+}
+
+.bottom {
+    top: 50%;
+    bottom: 0;
 }

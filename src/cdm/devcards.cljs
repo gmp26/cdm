@@ -3,7 +3,8 @@
   (:require
    [rum.core :as rum]
    [cljs.test :as t]
-   ;[sablono.core :as sab]
+   [cdm.core :as core]
+   ;;[sablono.core :as sab]
    )
   (:require-macros
    [devcards.core :as dc :refer [defcard deftest]]))
@@ -12,7 +13,7 @@
   [:div
    [:h2 "A devcard created with Rum"]])
 
-#_(defcard "##Charlie's Delightful Machine
+(defcard "##Charlie's Delightful Machine
 
 This is a stack of development cards intended to upgrade the existing js
 implementation.
@@ -31,26 +32,44 @@ implementation.
   {:hidden false}
   )
 
-(deftest test1 []
+(deftest should-fail []
   (t/is (= 2 3)))
 
-(deftest test2 []
-  (t/is (= 2 2)))
-
-(deftest test3 []
+(deftest should-pass []
   (t/is (even? 2)))
 
-;;
-;;------- unused below
-;;
+(defcard single-light
+  (core/coloured-light "yellow" "on")
+  {}
+  {:padding false})
 
-#_(rum/defc app-view []
-  [:div "Build the app here"])
+(defcard four-lights-on-off
+  (core/four-lights [{:class "yellow" :state "on"}
+                {:class "red" :state "off"}
+                {:class "blue" :state "on"}
+                {:class "green" :state "off"}]
+               )
+  {}
+  {:padding false})
 
-#_(defn main []
-  ;; conditionally start the app based on wether the #main-app-area
-  ;; node is on the page
-  (if-let [node (.getElementById js/document "main-app-area")]
-    (rum/mount (app-view) node)))
+(defcard four-lights-off-on
+  (core/four-lights [{:class "yellow" :state "off"}
+                {:class "red" :state "on"}
+                {:class "blue" :state "off"}
+                {:class "green" :state "on"}]
+               )
+  {}
+  {:padding false})
 
-#_(main)
+;;;
+;; Rules
+;;;
+(deftest linearity-tests
+  "n = ka + b for some k if (linear? n a b)"
+  (t/is (core/linear? 27 7 6) "k=3")
+  (t/is (core/linear? -1 0 -1) "k=anything")
+  (t/is (core/linear? -31 1 -32) "k=1")
+  (t/is (core/linear? 8 -3 2) "k=1")
+  (t/is (not (core/linear? 28 7 6)) "not linear")
+
+  )
