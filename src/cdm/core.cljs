@@ -86,6 +86,8 @@
     (integer? (/ (- n b) a)))
   )
 
+(def epsilon 1e-10)
+
 (defn square?
   "returns true if n is a square number"
   [n]
@@ -93,20 +95,41 @@
     (< n 0) false
     (= n 0) true
     :else (let [root (Math.round (Math.sqrt n))]
-            (< (Math.abs (-  (/ (* root root) n) 1)) 1e-8))))
+            (< (Math.abs (-  (/ (* root root) n) 1)) epsilon))))
+
+(defn disc [a b c]
+  (- (* b b) (* 4 a c)))
+
+(defn near-integer? [n]
+  (< (Math.abs (- n (Math.round n))) epsilon))
 
 (defn quadratic?
   "returns true if n is ak^2 + bk + c for some integer k"
   [n a b c]
-  (let [disc (- (* b b) (* 4 a c))]
-    (cond
-      (= a 0) (linear? n b c)
-      (< disc 0) false
-      (square? disc) true
-      :else false)))
+  (cond
+    (= a 0) (linear? n b c)
+    (< disc 0) false
+    (let [rdisc (Math.sqrt (disc a b (- c n)))
+          two-a (* 2 a)]
+      (or (near-integer? (/ (- rdisc b) two-a)) (near-integer? (/ (+ rdisc b) two-a)))) true
+      :else false))
+
 
 (defn int-in-range
   "return a function that generates an integer within [a,b)"
   [a b]
   (+ a (rand-int (- b a)))
   )
+
+(defn quadratic-list
+  "List the numbers that are in the quadratic sequence where |a_k| < n-max"
+  [n-max a b c]
+  (sort (take 20 (sort-by Math.abs  (for [k (range n-max)
+                                          :let [pos (quadratic? k a b c)
+                                                neg (quadratic? (- k) a b c)]
+                                          :when (or pos neg)]
+                                      (if pos k (- k)))))))
+
+
+
+;fn [a b] (> (Maths.abs a) (Maths.abs b))
