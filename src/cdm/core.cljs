@@ -124,12 +124,28 @@
 (defn quadratic-list
   "List the numbers that are in the quadratic sequence where |a_k| < n-max"
   [n-max a b c]
-  (sort (take 20 (sort-by Math.abs  (for [k (range n-max)
+  (sort (take 20 (sort-by Math.abs (for [k (range n-max)
                                           :let [pos (quadratic? k a b c)
                                                 neg (quadratic? (- k) a b c)]
                                           :when (or pos neg)]
                                       (if pos k (- k)))))))
 
+(defn random-quadratic-test-generator
+  "doc-string"
+  []
+  (let [a (int-in-range 0 3)
+        b (int-in-range 0 10)
+        c (int-in-range 0 20)]
+    (fn [n] (quadratic? n a b c))))
+
+(defn quad-on-off
+  "test n for quadratic sequence membership, returning on or off"
+  [n]
+  )
 
 
-;fn [a b] (> (Maths.abs a) (Maths.abs b))
+(def game-state (atom {:n 0}))
+
+(rum/defc cdm1 < rum/reactive []
+  (let [n (:n (rum/react game-state))])
+  (four-lights [{:class "yellow" :state ()}]))
