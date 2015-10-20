@@ -12,7 +12,7 @@
 (rum/defc rum-test []
   [:div
    [:h2 "A devcard created with Rum"]])
-
+()
 (defcard "##Charlie's Delightful Machine
 
 This is a stack of development cards intended to upgrade the existing js
@@ -77,3 +77,20 @@ implementation.
   (t/is (every?
          (fn [j] (and (>= j 0) (< j 5)))
          (for [i (range 100)] (core/int-in-range 0 5)))))
+
+(deftest square?
+  "square? should identify square numbers"
+  (t/is (not (core/square? -1)))
+  (t/is (core/square? 0))
+  (t/is (core/square? 1))
+  (t/is (not (core/square? 2)))
+  (t/is (not (core/square? 3)))
+  (t/is (core/square? 4))
+  (t/is (core/square? 1e10))
+  (t/is (core/square? 1e100))
+  (t/is (not (core/square? 1e31)))
+ )
+
+(deftest quadratic-tests
+  "n = ak^2 + bk + c for some integer k if (quadratic? n a b c)"
+  (t/is (not false)))

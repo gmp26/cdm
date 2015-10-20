@@ -34,8 +34,7 @@
 (rum/defc light [light-class on-class]
   [:div
    [:div {:class light-class}
-    [:div {:class (str on-class " " light-class)}
-     [:.rel]]]
+    [:div {:class (str on-class " " light-class)}]]
    [:span.etching {:class (if (= on-class "on") "etch-on" "etch-off")} "40W ECO"]])
 
 (rum/defc coloured-light [class state]
@@ -86,6 +85,25 @@
     (= n b)
     (integer? (/ (- n b) a)))
   )
+
+(defn square?
+  "returns true if n is a square number"
+  [n]
+  (cond
+    (< n 0) false
+    (= n 0) true
+    :else (let [root (Math.round (Math.sqrt n))]
+            (< (Math.abs (-  (/ (* root root) n) 1)) 1e-8))))
+
+(defn quadratic?
+  "returns true if n is ak^2 + bk + c for some integer k"
+  [n a b c]
+  (let [disc (- (* b b) (* 4 a c))]
+    (cond
+      (= a 0) (linear? n b c)
+      (< disc 0) false
+      (square? disc) true
+      :else false)))
 
 (defn int-in-range
   "return a function that generates an integer within [a,b)"
