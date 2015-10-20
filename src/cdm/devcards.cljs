@@ -147,5 +147,10 @@ implementation.
     (let [a (rand-nth [(core/int-in-range 0 3)])
           b (core/int-in-range 0 10)
           c (core/int-in-range 0 20)]
-      {:a a :b b :c c :seq (core/quadratic-list 1000 a b c
-                                                )})))
+      {:a a :b b :c c :seq (core/quadratic-list 1000 a b c)})))
+
+#_(defcard generator
+  (core/random-quadratic-test-generator))
+
+(defcard machine-1
+  (core/cdm1))

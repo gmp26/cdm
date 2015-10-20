@@ -136,16 +136,19 @@
   (let [a (int-in-range 0 3)
         b (int-in-range 0 10)
         c (int-in-range 0 20)]
-    (fn [n] (quadratic? n a b c))))
+    (fn [n] (if (quadratic? n a b c) "on" "off"))))
 
-(defn quad-on-off
-  "test n for quadratic sequence membership, returning on or off"
-  [n]
-  )
+(def game-state (atom {:n 0
+                       :generators (for [i (range 4)]
+                                    (random-quadratic-test-generator)
+                                    )}))
 
-
-(def game-state (atom {:n 0}))
 
 (rum/defc cdm1 < rum/reactive []
-  (let [n (:n (rum/react game-state))])
-  (four-lights [{:class "yellow" :state ()}]))
+  (let [gs (rum/react game-state)
+        n (:n gs)
+        tests (:generators gs)]
+    (four-lights [{:class "yellow" :state ((nth tests 0) n)}
+                  {:class "red" :state ((nth tests 1) n)}
+                  {:class "green" :state ((nth tests 2) n)}
+                  {:class "blue" :state ((nth tests 3) n)}])))
