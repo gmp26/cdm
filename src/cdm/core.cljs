@@ -49,7 +49,12 @@
                         :transform (str "rotateZ(" deg ")")
                         }}]))
 
-(rum/defc four-lights [[a b c d]]
+(declare static-content)
+(declare game-state)
+(declare handle-change)
+(declare handle-reload)
+
+(rum/defc four-lights < rum/reactive [[a b c d]]
   [:div.full-square
    [:.quarter-square.top.left
     (coloured-light (:class a) (:state a))]
@@ -58,25 +63,47 @@
    [:.quarter-square.bottom.left
     (coloured-light (:class c) (:state c))]
    [:.quarter-square.bottom.right
-    (coloured-light (:class d) (:state d))]])
-
-(rum/defc title []
-  [:.title "Charlie's Delightful Machine"])
-
-
-(rum/defc static-content []
-  [:div
-   "How do numbers contol these lights? Reload to get a new set of rules."])
+    (coloured-light (:class d) (:state d))]
+   [:.static {:style {:zoom 0.8
+                      :right "28%"
+                      :top "28%"
+                      :border "none"
+                      :background-color "rgba(0,0,0,0.7)"}}
+    (static-content)
+    [:input.num {:value (:n (rum/react game-state))
+                 :type "number"
+                 :pattern "d*"
+                 :on-change handle-change}]
+    [:button.rules {:on-click handle-reload
+                    :on-touch-end handle-reload} "Change rules"]]])
 
 (declare game-state)
+(declare new-gen-set)
+
+(defn handle-reload [event]
+  (swap! game-state #(assoc % :generators (new-gen-set)))
+  (.preventDefault event)
+  (.stopPropagation event)
+  )
+
+(rum/defc title []
+  [:.title "Charlie's Delightful Machine"
+
+   ])
+
+(rum/defc static-content []
+  [:p
+   "Enter some whole numbers in the box and so discover
+the rules which switch on each of the lights."])
 
 (defn handle-change [event]
   (let [n (.-value (.-target event))]
     (swap! game-state #(assoc % :n n)))
   #_(.log js/console (.-value (.-target event))))
 
-(rum/defc four-bulbs [[a b c d]]
-  [:div {:style {:position "relative"}}
+(rum/defc four-bulbs < rum/reactive [[a b c d]]
+  [:div {:style {:position "relative"
+                 :background-color "black"}}
    (title)
    (coloured-bulb (:class a) (:state a) 0)
    (coloured-bulb (:class b) (:state b) 0)
@@ -84,9 +111,12 @@
    (coloured-bulb (:class d) (:state d) 0)
    [:.static
     (static-content)
-    [:input.num {:id "n"
+    [:input.num {:value (:n (rum/react game-state))
                  :type "number"
-                 :on-change handle-change}]]])
+                 :pattern "d*"
+                 :on-change handle-change}]
+    [:button.rules {:on-click handle-reload
+             :on-touch-end handle-reload} "Change rules"]]])
 
  ;;
  ;; Put the app/game in here
@@ -151,7 +181,6 @@
       (or (near-integer? (/ (- rdisc b) two-a)) (near-integer? (/ (+ rdisc b) two-a)))) true
       :else false))
 
-
 (defn int-in-range
   "return a function that generates an integer within [a,b)"
   [a b]
@@ -175,11 +204,13 @@
         c (int-in-range 0 20)]
     (fn [n] (if (quadratic? n a b c) "on" "off"))))
 
-(def game-state (atom {:n 0
-                       :generators (vec (for [i (range 4)]
-                                          (random-quadratic-test-generator)
-                                          ))}))
+(defn new-gen-set []
+  (vec (for [i (range 4)]
+         (random-quadratic-test-generator)
+         )))
 
+(def game-state (atom {:n 0
+                       :generators (new-gen-set)}))
 
 (rum/defc cdm1 < rum/reactive []
   (let [gs (rum/react game-state)
@@ -189,8 +220,7 @@
     (four-lights [{:class "yellow" :state ((tests 0) n)}
                   {:class "red" :state ((tests 1) n)}
                   {:class "green" :state ((tests 2) n)}
-                  {:class "blue" :state ((tests 3) n)}]
-                 )))
+                  {:class "blue" :state ((tests 3) n)}])))
 
 (rum/defc cdm2 < rum/reactive []
   (let [gs (rum/react game-state)
@@ -200,6 +230,4 @@
     (four-bulbs [{:class "yellow" :state ((tests 0) n)}
                  {:class "red" :state ((tests 1) n)}
                  {:class "blue" :state ((tests 2) n)}
-                 {:class "green" :state ((tests 3) n)}]))
-
-)
+                 {:class "green" :state ((tests 3) n)}])))

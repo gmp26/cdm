@@ -149,8 +149,11 @@ implementation.
           c (core/int-in-range 0 20)]
       {:a a :b b :c c :seq (core/quadratic-list 1000 a b c)})))
 
-#_(defcard generator
+(defcard generator
   (core/random-quadratic-test-generator))
+
+(defcard machine-1
+  (core/cdm1))
 
 (defcard bulb-on
   (core/coloured-bulb "yellow" "on" ))
@@ -158,18 +161,17 @@ implementation.
 (defcard bulb-off
   (core/coloured-bulb "yellow" "off" ))
 
-(defcard four-bulbs
-  (core/four-bulbs [{:class "yellow" :state "on"}
-                    {:class "red" :state "on"}
-                    {:class "blue" :state "on"}
-                    {:class "green" :state "on"}]))
-
 (defcard title
   (core/title))
 
-(defcard machine-1
-  (core/cdm1))
-
+(defcard static-content
+  (core/static-content))
 
 (defcard machine-2
   (core/cdm2))
+
+#_(defcard four-bulbs
+  (core/four-bulbs [{:class "yellow" :state "off"}
+                    {:class "red" :state "on"}
+                    {:class "blue" :state "on"}
+                    {:class "green" :state "on"}]))
