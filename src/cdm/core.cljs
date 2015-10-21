@@ -26,10 +26,10 @@
 
 (defn pc [n] (str (.toFixed n 2) "%"))
 
-
 (rum/defc responsive-black-square [& content]
   [:.black-square
    content])
+
 
 (rum/defc light [light-class on-class]
   [:div
@@ -40,8 +40,14 @@
 (rum/defc coloured-light [class state]
   (let [spec (str class " lamp")]
     (responsive-black-square
-     (light spec state)))
-  )
+     (light spec state))))
+
+(rum/defc coloured-bulb [class state deg]
+  (let [url (str  "url(/assets/" class "-" state ".png)")]
+    [:div.bulb {:style {:background-image url
+                        :-webkit-transform (str "rotateZ(" deg "deg)")
+                        :transform (str "rotateZ(" deg ")")
+                        }}]))
 
 (rum/defc four-lights [[a b c d]]
   [:div.full-square
@@ -53,6 +59,34 @@
     (coloured-light (:class c) (:state c))]
    [:.quarter-square.bottom.right
     (coloured-light (:class d) (:state d))]])
+
+(rum/defc four-bulbs [[a b c d]]
+  [:div {:style {:position "relative"}}
+   [:div {:style {
+                  :background-color "black"
+                  :width "100%"
+                  :color "white"
+                  :text-align "center"
+                  :font-size "30px"
+                  }}
+    "Charlie's Delightful Machine"]
+   (coloured-bulb (:class a) (:state a) 0)
+   (coloured-bulb (:class b) (:state b) 0)
+   (coloured-bulb (:class c) (:state c) 0)
+   (coloured-bulb (:class d) (:state d) 0)
+   [:div {:style
+          {:position "absolute"
+           :top "47%"
+           :right "10%"
+           :color "white"
+           :border "1px solid white"
+           }}
+    [:input {:type "number"
+             :style {:font-size "50px"
+                     :width "235px"
+                     :background-color "black"
+                     :color "#cccccc"
+                     :vertical-align "middle"}}]]])
 
 ;;
 ;; Put the app/game in here
@@ -139,16 +173,30 @@
     (fn [n] (if (quadratic? n a b c) "on" "off"))))
 
 (def game-state (atom {:n 0
-                       :generators (for [i (range 4)]
-                                    (random-quadratic-test-generator)
-                                    )}))
+                       :generators (vec (for [i (range 4)]
+                                          (random-quadratic-test-generator)
+                                          ))}))
 
 
 (rum/defc cdm1 < rum/reactive []
   (let [gs (rum/react game-state)
         n (:n gs)
         tests (:generators gs)]
-    (four-lights [{:class "yellow" :state ((nth tests 0) n)}
-                  {:class "red" :state ((nth tests 1) n)}
-                  {:class "green" :state ((nth tests 2) n)}
-                  {:class "blue" :state ((nth tests 3) n)}])))
+
+    (four-lights [{:class "yellow" :state ((tests 0) n)}
+                  {:class "red" :state ((tests 1) n)}
+                  {:class "green" :state ((tests 2) n)}
+                  {:class "blue" :state ((tests 3) n)}]
+                 )))
+
+(rum/defc cdm2 < rum/reactive []
+  (let [gs (rum/react game-state)
+        n (:n gs)
+        tests (:generators gs)]
+
+    (four-bulbs [{:class "yellow" :state ((tests 0) n)}
+                 {:class "red" :state ((tests 1) n)}
+                 {:class "blue" :state ((tests 2) n)}
+                 {:class "green" :state ((tests 3) n)}]))
+
+)

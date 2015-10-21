@@ -116,3 +116,24 @@
     top: 50%;
     bottom: 0;
 }
+
+
+.bulb-square {
+    width: 100%;
+    padding-top: 100%;
+    background-color: #000;
+    box-sizing: border-box;
+    border: 10px solid red;
+}
+.bulb {
+    width: 100%;
+    padding-bottom: 30%;
+    background-repeat: no-repeat;
+    background-size: 36%;
+    background-color: black;
+    border: 1px solid green;
+    /*
+    -webkit-transform: rotateZ(90deg);
+    transform: rotateZ(90deg);
+   */
+}
