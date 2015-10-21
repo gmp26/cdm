@@ -60,37 +60,38 @@
    [:.quarter-square.bottom.right
     (coloured-light (:class d) (:state d))]])
 
+(rum/defc title []
+  [:.title "Charlie's Delightful Machine"])
+
+
+(rum/defc static-content []
+  [:div
+   "How do numbers contol these lights? Reload to get a new set of rules."])
+
+(declare game-state)
+
+(defn handle-change [event]
+  (let [n (.-value (.-target event))]
+    (swap! game-state #(assoc % :n n)))
+  #_(.log js/console (.-value (.-target event))))
+
 (rum/defc four-bulbs [[a b c d]]
   [:div {:style {:position "relative"}}
-   [:div {:style {
-                  :background-color "black"
-                  :width "100%"
-                  :color "white"
-                  :text-align "center"
-                  :font-size "30px"
-                  }}
-    "Charlie's Delightful Machine"]
+   (title)
    (coloured-bulb (:class a) (:state a) 0)
    (coloured-bulb (:class b) (:state b) 0)
    (coloured-bulb (:class c) (:state c) 0)
    (coloured-bulb (:class d) (:state d) 0)
-   [:div {:style
-          {:position "absolute"
-           :top "47%"
-           :right "10%"
-           :color "white"
-           :border "1px solid white"
-           }}
-    [:input {:type "number"
-             :style {:font-size "50px"
-                     :width "235px"
-                     :background-color "black"
-                     :color "#cccccc"
-                     :vertical-align "middle"}}]]])
+   [:.static
+    (static-content)
+    [:input.num {:id "n"
+                 :type "number"
+                 :on-change handle-change}]]])
 
-;;
-;; Put the app/game in here
-;;
+ ;;
+ ;; Put the app/game in here
+ ;;
+
 (rum/defc game-container < rum/reactive []
   (four-lights [{:class "yellow" :state "on"}
                 {:class "red" :state "off"}
@@ -98,16 +99,18 @@
                 {:class "green" :state "off"}]
                ))
 
-;;
-;; mount main component on html game element
-;;
+ ;;
+ ;; mount main component on html game element
+ ;;
+
 
 (if-let [node (el "game")]
   (rum/mount (game-container) node))
 
-;;
-;; optionally do something on game reload
-;;
+ ;;
+ ;; optionally do something on game reload
+ ;;
+
 (defn on-js-reload []
   (swap! game update-in [:__figwheel_counter] inc))
 

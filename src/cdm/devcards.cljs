@@ -152,15 +152,20 @@ implementation.
 #_(defcard generator
   (core/random-quadratic-test-generator))
 
-(defcard bulb-test
-  (core/coloured-bulb "yellow" "on" 0))
+(defcard bulb-on
+  (core/coloured-bulb "yellow" "on" ))
+
+(defcard bulb-off
+  (core/coloured-bulb "yellow" "off" ))
 
 (defcard four-bulbs
   (core/four-bulbs [{:class "yellow" :state "on"}
-                {:class "red" :state "on"}
-                {:class "blue" :state "on"}
-                {:class "green" :state "on"}]))
+                    {:class "red" :state "on"}
+                    {:class "blue" :state "on"}
+                    {:class "green" :state "on"}]))
 
+(defcard title
+  (core/title))
 
 (defcard machine-1
   (core/cdm1))
