@@ -72,7 +72,6 @@
     (static-content)
     [:input.num {:value (:n (rum/react game-state))
                  :type "number"
-                 :pattern "d*"
                  :on-change handle-change}]
     [:button.rules {:on-click handle-reload
                     :on-touch-end handle-reload} "Change rules"]]])
@@ -199,9 +198,9 @@ the rules which switch on each of the lights."])
 (defn random-quadratic-test-generator
   "doc-string"
   []
-  (let [a (int-in-range 0 3)
-        b (int-in-range 0 10)
-        c (int-in-range 0 20)]
+  (let [a (int-in-range -3 3)
+        b (int-in-range -5 5)
+        c (int-in-range -20 20)]
     (fn [n] (if (quadratic? n a b c) "on" "off"))))
 
 (defn new-gen-set []
