@@ -75,8 +75,8 @@ implementation.
 (deftest int-in-range
   "test 100 random integers in range [-5,5)"
   (t/is (every?
-         (fn [j] (and (>= j -5) (< j 5)))
-         (for [i (range 100)] (core/int-in-range -5 5)))))
+         (fn [j] (and (>= j -5) (<= j 5)))
+         (for [i (range 100)] (core/int-in-range -5 6)))))
 
 (deftest square?
   "square? should identify square numbers"

@@ -101,8 +101,7 @@ the rules which switch on each of the lights."])
   #_(.log js/console (.-value (.-target event))))
 
 (rum/defc four-bulbs < rum/reactive [[a b c d]]
-  [:div {:style {:position "relative"
-                 :background-color "black"}}
+  [:.game-root
    (title)
    (coloured-bulb (:class a) (:state a) 0)
    (coloured-bulb (:class b) (:state b) 0)
@@ -117,33 +116,6 @@ the rules which switch on each of the lights."])
     [:button.rules {:on-click handle-reload
              :on-touch-end handle-reload} "Change rules"]]])
 
- ;;
- ;; Put the app/game in here
- ;;
-
-(rum/defc game-container < rum/reactive []
-  (four-lights [{:class "yellow" :state "on"}
-                {:class "red" :state "off"}
-                {:class "blue" :state "off"}
-                {:class "green" :state "off"}]
-               ))
-
- ;;
- ;; mount main component on html game element
- ;;
-
-
-(if-let [node (el "game")]
-  (rum/mount (game-container) node))
-
- ;;
- ;; optionally do something on game reload
- ;;
-
-(defn on-js-reload []
-  (swap! game update-in [:__figwheel_counter] inc))
-
-
 (defn linear?
   "returns true if n = ka + b for some integer k"
   [n a b]
@@ -154,7 +126,7 @@ the rules which switch on each of the lights."])
 
 (def epsilon 1e-10)
 
-(defn square?
+#_(defn square?
   "returns true if n is a square number"
   [n]
   (cond
@@ -162,6 +134,18 @@ the rules which switch on each of the lights."])
     (= n 0) true
     :else (let [root (Math.round (Math.sqrt n))]
             (< (Math.abs (-  (/ (* root root) n) 1)) epsilon))))
+
+(defn square?
+  "returns true if n is a square number"
+  [n]
+  (cond
+    (< n 0) false
+    (= n 0) true
+    :else (let [root (Math.round (Math.sqrt n))]
+            (< (Math.abs (- (* root root) n)) epsilon))))
+
+
+
 
 (defn disc [a b c]
   (- (* b b) (* 4 a c)))
@@ -195,13 +179,27 @@ the rules which switch on each of the lights."])
                                           :when (or pos neg)]
                                       (if pos k (- k)))))))
 
+ƒ_(defn random-quadratic-test-generator
+  "doc-string"
+  []
+  (let [a (int-in-range -3 4)
+        b (int-in-range -5 6)
+        c (int-in-range -20 21)]
+    (fn [n] (if (quadratic? n a b c) "on" "off"))))
+
 (defn random-quadratic-test-generator
   "doc-string"
   []
-  (let [a (int-in-range -3 3)
-        b (int-in-range -5 5)
-        c (int-in-range -20 20)]
+  (let [two-a (int-in-range -6 7)
+        a (/ two-a 2)
+        b (if (integer? a)
+            (int-in-range -5 6)
+            (+ 0.5 (int-in-range -5 5)))
+        c (int-in-range -20 21)]
     (fn [n] (if (quadratic? n a b c) "on" "off"))))
+
+
+
 
 (defn new-gen-set []
   (vec (for [i (range 4)]
@@ -230,3 +228,31 @@ the rules which switch on each of the lights."])
                  {:class "red" :state ((tests 1) n)}
                  {:class "blue" :state ((tests 2) n)}
                  {:class "green" :state ((tests 3) n)}])))
+
+
+ ;;
+ ;; Put the app/game in here
+ ;;
+
+(rum/defc game-container < rum/reactive []
+  (cdm2)
+  #_(four-lights [{:class "yellow" :state "on"}
+                {:class "red" :state "off"}
+                {:class "blue" :state "off"}
+                {:class "green" :state "off"}]
+               ))
+
+ ;;
+ ;; mount main component on html game element
+ ;;
+
+
+(if-let [node (el "game")]
+  (rum/mount (game-container) node))
+
+ ;;
+ ;; optionally do something on game reload
+ ;;
+
+(defn on-js-reload []
+  (swap! game update-in [:__figwheel_counter] inc))
