@@ -179,7 +179,7 @@ the rules which switch on each of the lights."])
                                           :when (or pos neg)]
                                       (if pos k (- k)))))))
 
-ƒ_(defn random-quadratic-test-generator
+#_(defn random-quadratic-test-generator
   "doc-string"
   []
   (let [a (int-in-range -3 4)
