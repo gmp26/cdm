@@ -79,8 +79,24 @@
 (declare game-state)
 (declare new-gen-set)
 
+(defn new-rule
+  "generate new random rules"
+  []
+  {:a (int-in-range -3 4)
+   :b (int-in-range -5 6)
+   :c (int-in-range -20 21)})
+
+(def new-rules
+  "assoc a new set of rules onto given map"
+  #(assoc %
+          :yellow (new-rule)
+          :red (new-rule)
+          :blue (new-rule)
+          :green (new-rule)
+          :generators (new-gen-set)))
+
 (defn handle-reload [event]
-  (swap! game-state #(assoc % :generators (new-gen-set)))
+  (swap! game-state new-rules)
   (.preventDefault event)
   (.stopPropagation event)
   )
