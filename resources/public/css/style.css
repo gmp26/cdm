@@ -142,10 +142,11 @@
 
 input.num {
     font-size: 40px;
-    width: calc(100% - 10px);
+    width: 100%;
     background-color: #222222;
     color: #00cc00;
     border: none;
+    box-sizing: border-box;
     border-radius: 2px;
     padding: 5px;
 }
@@ -154,6 +155,10 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance:textfield;
 }
 
 .spinner button {

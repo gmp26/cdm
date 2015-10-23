@@ -127,8 +127,10 @@
    [:.static
     (static-content)
     [:.spinner
-     [:button.up {:on-click handle-plus} "+"]
-     [:button.down {on-click handle-minus} "-"]
+     [:button.up {:on-click handle-plus
+                  :on-touch-end handle-plus} "+"]
+     [:button.down {on-click handle-minus
+                    on-touch-end handle-minus} "-"]
      [:input.num {:value (:n (rum/react game-state))
                   :type "number"
                   :pattern "\\d*"
