@@ -1,10 +1,12 @@
 (ns ^:figwheel-always cdm.core
     (:require [rum.core :as rum]
               [cljs.reader :as reader]
+              [cljs.core.async :as async :refer [<! >! chan close! sliding-buffer put! alts! timeout]]
               [clojure.set :refer (intersection)]
               [cljsjs.react]
               ;[jayq.core :refer ($)]
               )
+    (:require-macros [cljs.core.async.macros :as m :refer [go alt!]])
     ;(:require-macros [jayq.macros :refer [ready]])
 )
 
@@ -14,33 +16,17 @@
 ;; define game state once so it doesn't re-initialise on reload.
 ;; figwheel counter is a placeholder for any state affected by figwheel live reload events
 ;;;
-(defonce game (atom {:title "Charlie's Delightful Machine"
-                     :__figwheel_counter 0}))
 
 (defn el [id] (.getElementById js/document id))
 
 
-(rum/defc home < rum/reactive []
-  [:div.row
-])
-
 (defn pc [n] (str (.toFixed n 2) "%"))
-
-(rum/defc responsive-black-square [& content]
-  [:.black-square
-   content])
-
 
 (rum/defc light [light-class on-class]
   [:div
    [:div {:class light-class}
     [:div {:class (str on-class " " light-class)}]]
    [:span.etching {:class (if (= on-class "on") "etch-on" "etch-off")} "40W ECO"]])
-
-(rum/defc coloured-light [class state]
-  (let [spec (str class " lamp")]
-    (responsive-black-square
-     (light spec state))))
 
 (rum/defc coloured-bulb [class state deg]
   (let [url (str  "url(/assets/" class "-" state ".png)")]
@@ -53,68 +39,83 @@
 (declare game-state)
 (declare handle-change)
 (declare handle-reload)
+(declare int-in-range)
 
-(rum/defc four-lights < rum/reactive [[a b c d]]
-  [:div.full-square
-   [:.quarter-square.top.left
-    (coloured-light (:class a) (:state a))]
-   [:.quarter-square.top.right
-    (coloured-light (:class b) (:state b))]
-   [:.quarter-square.bottom.left
-    (coloured-light (:class c) (:state c))]
-   [:.quarter-square.bottom.right
-    (coloured-light (:class d) (:state d))]
-   [:.static {:style {:zoom 0.8
-                      :right "28%"
-                      :top "28%"
-                      :border "none"
-                      :background-color "rgba(0,0,0,0.7)"}}
-    (static-content)
-    [:input.num {:value (:n (rum/react game-state))
-                 :type "number"
-                 :on-change handle-change}]
-    [:button.rules {:on-click handle-reload
-                    :on-touch-end handle-reload} "Change rules"]]])
 
-(declare game-state)
-(declare new-gen-set)
+(defn new-quadratic
+  "generate new random quadratic coefficients"
+  [level]
+  (cond
+    (= level :lev3)
+    (let [a (/ (int-in-range -6 7) 2)]
+      {:a a
+       :b (if (integer? a)
+            (int-in-range -5 6)
+            (+ 0.5 (int-in-range -5 5)))
+       :c (int-in-range -20 21)})
 
-(defn new-rule
-  "generate new random rules"
-  []
-  {:a (int-in-range -3 4)
-   :b (int-in-range -5 6)
-   :c (int-in-range -20 21)})
+    (= level :lev2)
+    (let [a (/ (int-in-range 0 5) 2)]
+      {:a a
+       :b (if (integer? a)
+            (int-in-range -5 6)
+            (+ 0.5 (int-in-range -5 5)))
+       :c (int-in-range -20 21)})
 
-(def new-rules
-  "assoc a new set of rules onto given map"
-  #(assoc %
-          :yellow (new-rule)
-          :red (new-rule)
-          :blue (new-rule)
-          :green (new-rule)
-          :generators (new-gen-set)))
+    :else
+    {:a 0
+     :b (int-in-range -10 11)
+     :c (int-in-range -20 21)}
 
-(defn handle-reload [event]
-  (swap! game-state new-rules)
+    ))
+
+
+(defn new-quadratics
+  "assoc a new set of rules onto given map for given level"
+  [level]
+  (conj {:level level}
+        {:yellow (new-quadratic level)
+         :red (new-quadratic level)
+         :blue (new-quadratic level)
+         :green (new-quadratic level)}))
+
+(defn handle-reload [event level]
+  (swap! game-state #(conj % (new-quadratics level)))
   (.preventDefault event)
   (.stopPropagation event)
   )
 
 (rum/defc title []
-  [:.title "Charlie's Delightful Machine"
-
-   ])
+  [:.title "Charlie's Delightful Machine"])
 
 (rum/defc static-content []
-  [:p
-   "Enter some whole numbers in the box and so discover
-the rules which switch on each of the lights."])
+  [:p "Enter some whole numbers in the box and so discover the rules which switch on each of the lights."])
 
 (defn handle-change [event]
-  (let [n (.-value (.-target event))]
-    (swap! game-state #(assoc % :n n)))
-  #_(.log js/console (.-value (.-target event))))
+  (let [n (int (.-value (.-target event)))]
+    (swap! game-state #(assoc % :n n))))
+
+
+(defn handle-plus
+  "plus clicked"
+  [event]
+  (swap! game-state #(update % :n inc))
+  )
+
+(defn handle-minus
+  "minus clicked"
+  [event]
+  (swap! game-state #(update % :n dec))
+  )
+
+
+(defn toggle-class
+  "get a css class "
+  [level]
+  (if (= (:level @game-state) level)
+    "rules lit"
+    "rules")
+  )
 
 (rum/defc four-bulbs < rum/reactive [[a b c d]]
   [:.game-root
@@ -125,12 +126,25 @@ the rules which switch on each of the lights."])
    (coloured-bulb (:class d) (:state d) 0)
    [:.static
     (static-content)
-    [:input.num {:value (:n (rum/react game-state))
-                 :type "number"
-                 :pattern "d*"
-                 :on-change handle-change}]
-    [:button.rules {:on-click handle-reload
-             :on-touch-end handle-reload} "Change rules"]]])
+    [:.spinner
+     [:button.up {:on-click handle-plus} "+"]
+     [:button.down {on-click handle-minus} "-"]
+     [:input.num {:value (:n (rum/react game-state))
+                  :type "number"
+                  :pattern "\\d*"
+                  :on-change handle-change}]
+     ]
+
+    [:button#lev0 {:class (toggle-class :lev1)
+                         :on-click #(handle-reload % :lev1)
+                         :on-touch-end #(handle-reload % :lev1)} "Level 1"]
+    [:button#lev1.rules {:class (toggle-class :lev2)
+                         :on-click #(handle-reload % :lev2)
+                         :on-touch-end #(handle-reload % :lev2)} "Level 2"]
+    [:button#lev2.rules {:class (toggle-class :lev3)
+                         :on-click #(handle-reload % :lev3)
+                         :on-touch-end #(handle-reload % :lev3)} "Level 3"]
+]])
 
 (defn linear?
   "returns true if n = ka + b for some integer k"
@@ -203,47 +217,30 @@ the rules which switch on each of the lights."])
         c (int-in-range -20 21)]
     (fn [n] (if (quadratic? n a b c) "on" "off"))))
 
-(defn random-quadratic-test-generator
-  "doc-string"
-  []
-  (let [two-a (int-in-range -6 7)
-        a (/ two-a 2)
-        b (if (integer? a)
-            (int-in-range -5 6)
-            (+ 0.5 (int-in-range -5 5)))
-        c (int-in-range -20 21)]
-    (fn [n] (if (quadratic? n a b c) "on" "off"))))
 
 
+(defn bool->on-off
+  [b]
+  (if b "on" "off"))
+
+(def game-state (atom (conj (new-quadratics :lev1) {:n 0 :level :lev1})))
 
 
-(defn new-gen-set []
-  (vec (for [i (range 4)]
-         (random-quadratic-test-generator)
-         )))
-
-(def game-state (atom {:n 0
-                       :generators (new-gen-set)}))
-
-(rum/defc cdm1 < rum/reactive []
-  (let [gs (rum/react game-state)
-        n (:n gs)
-        tests (:generators gs)]
-
-    (four-lights [{:class "yellow" :state ((tests 0) n)}
-                  {:class "red" :state ((tests 1) n)}
-                  {:class "green" :state ((tests 2) n)}
-                  {:class "blue" :state ((tests 3) n)}])))
+(defn bulb-state
+  "return a map containing class and on-off state of a bulb"
+  [gs color n]
+  (let [rule (color gs)]
+    {:class (name color) :state (bool->on-off (quadratic? n (:a rule) (:b rule) (:c rule)))}))
 
 (rum/defc cdm2 < rum/reactive []
   (let [gs (rum/react game-state)
-        n (:n gs)
-        tests (:generators gs)]
+        n (:n gs)]
 
-    (four-bulbs [{:class "yellow" :state ((tests 0) n)}
-                 {:class "red" :state ((tests 1) n)}
-                 {:class "blue" :state ((tests 2) n)}
-                 {:class "green" :state ((tests 3) n)}])))
+    (four-bulbs [(bulb-state gs :yellow n)
+                 (bulb-state gs :red n)
+                 (bulb-state gs :blue n)
+                 (bulb-state gs :green n)
+                 ])))
 
 
  ;;
@@ -251,12 +248,8 @@ the rules which switch on each of the lights."])
  ;;
 
 (rum/defc game-container < rum/reactive []
-  (cdm2)
-  #_(four-lights [{:class "yellow" :state "on"}
-                {:class "red" :state "off"}
-                {:class "blue" :state "off"}
-                {:class "green" :state "off"}]
-               ))
+  "Charlies Delightful Machine - 2"
+  (cdm2))
 
  ;;
  ;; mount main component on html game element
@@ -271,4 +264,69 @@ the rules which switch on each of the lights."])
  ;;
 
 (defn on-js-reload []
-  (swap! game update-in [:__figwheel_counter] inc))
+  (swap! game-state update-in [:__figwheel_counter] inc))
+
+
+;;;;;;;;;;; defunct code ------>
+
+#_(rum/defc home < rum/reactive []
+  [:div.row
+])
+
+#_(rum/defc responsive-black-square [& content]
+  [:.black-square
+   content])
+
+
+#_(rum/defc coloured-light [class state]
+  (let [spec (str class " lamp")]
+    (responsive-black-square
+     (light spec state))))
+
+#_(rum/defc four-lights < rum/reactive [[a b c d]]
+  [:div.full-square
+   [:.quarter-square.top.left
+    (coloured-light (:class a) (:state a))]
+   [:.quarter-square.top.right
+    (coloured-light (:class b) (:state b))]
+   [:.quarter-square.bottom.left
+    (coloured-light (:class c) (:state c))]
+   [:.quarter-square.bottom.right
+    (coloured-light (:class d) (:state d))]
+   [:.static {:style {:zoom 0.8
+                      :right "28%"
+                      :top "28%"
+                      :border "none"}}
+    (static-content)
+    [:div {:on-wheel handle-wheel}
+     [:input.num {:value (:n (rum/react game-state))
+                  :type "number"
+                  :on-change handle-change
+                  }]]
+    [:button#lev0.rules {:on-click handle-reload
+                    :on-touch-end handle-reload} "Change rules"]
+    [:button#lev1.rules {:on-click handle-reload
+                    :on-touch-end handle-reload} "Change rules"]
+    [:button#lev2.rules {:on-click handle-reload
+                    :on-touch-end handle-reload} "Change rules"]
+    ]])
+
+#_(rum/defc cdm1 < rum/reactive []
+  (let [gs (rum/react game-state)
+        n (:n gs)
+        tests (:generators gs)]
+
+    (four-lights [{:class "yellow" :state ((tests 0) n)}
+                  {:class "red" :state ((tests 1) n)}
+                  {:class "green" :state ((tests 2) n)}
+                  {:class "blue" :state ((tests 3) n)}])))
+
+#_(defn random-quadratic-test-generator
+  "doc-string"
+  []
+  )
+
+#_(defn new-gen-set []
+  (vec (for [i (range 4)]
+         (random-quadratic-test-generator)
+         )))

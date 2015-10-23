@@ -38,12 +38,12 @@ implementation.
 (deftest should-pass []
   (t/is (even? 2)))
 
-(defcard single-light
+#_(defcard single-light
   (core/coloured-light "yellow" "on")
   {}
   {:padding false})
 
-(defcard four-lights-on-off
+#_(defcard four-lights-on-off
   (core/four-lights [{:class "yellow" :state "on"}
                 {:class "red" :state "off"}
                 {:class "blue" :state "on"}
@@ -52,7 +52,7 @@ implementation.
   {}
   {:padding false})
 
-(defcard four-lights-off-on
+#_(defcard four-lights-off-on
   (core/four-lights [{:class "yellow" :state "off"}
                 {:class "red" :state "on"}
                 {:class "blue" :state "off"}
@@ -73,7 +73,7 @@ implementation.
   (t/is (not (core/linear? 28 7 6)) "not linear"))
 
 (deftest int-in-range
-  "test 100 random integers in range [-5,5)"
+  "test 100 random integers in range [-5,6)"
   (t/is (every?
          (fn [j] (and (>= j -5) (<= j 5)))
          (for [i (range 100)] (core/int-in-range -5 6)))))
@@ -87,14 +87,19 @@ implementation.
   (t/is (not (core/square? 3)))
   (t/is (core/square? 4))
   (t/is (core/square? 1e10))
-  (t/is (core/square? 1e100))
-  (t/is (not (core/square? 1e19))  "tolerance limit around here")
-  (t/is (core/square? 1e21) "wrong due to choice of ε = 1e-10")
+  (t/is (not (core/square? 1e29)))
+  (t/is (core/square? 1e30))
+  (t/is (not (core/square? 1e31)))
+  (t/is (core/square? 1e32))
+  (t/is (core/square? 1e33)  "wrong - tolerance limit is around here")
   )
 
 (deftest disc
   "should calculate the discriminant"
   (t/is (core/disc 0 0 0) 0)
+  (t/is (core/disc 2 0 0) 4)
+  (t/is (core/disc 0 1 1) -4)
+  (t/is (core/disc 2 2 2) -12)
   (t/is (core/disc 2 7 3) 25)
   )
 
@@ -149,10 +154,10 @@ implementation.
           c (core/int-in-range 0 20)]
       {:a a :b b :c c :seq (core/quadratic-list 1000 a b c)})))
 
-(defcard generator
+#_(defcard generator
   (core/random-quadratic-test-generator))
 
-(defcard machine-1
+#_(defcard machine-1
   (core/cdm1))
 
 (defcard bulb-on
@@ -166,6 +171,9 @@ implementation.
 
 (defcard static-content
   (core/static-content))
+
+(defcard game-state
+  core/game-state)
 
 (defcard machine-2
   (core/cdm2))

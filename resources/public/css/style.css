@@ -131,12 +131,12 @@
 
 .static {
     position: absolute;
-    top: 20%;
-    width: 60%;
-    right: 7%;
+    top: 12%;
+    width: 50%;
+    right: 5%;
     color: white;
     padding: 20px;
-    border: 5px dashed grey;
+    /*border: 5px dashed grey;*/
     border-radius: 10px;
 }
 
@@ -150,21 +150,60 @@ input.num {
     padding: 5px;
 }
 
-button.rules {
-    float: right;
-    margin: 20px 0px 0px 0px;
-    padding: 5px;
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.spinner button {
     background-color: #048;
     font-size: 18px;
     color: white;
-    border-color: teal;
+    width: 40px;
+    /*border-color: teal; */
     border-radius: 5px;
     cursor: pointer;
 }
 
+.spinner button.up {
+        float: left;
+    }
+
+.spinner button.up {
+        float: right;
+    }
+
+button.rules {
+    float: right;
+    margin: 10px 0px 0px 0px;
+    display: inline;
+    padding: 5px;
+    background-color: #048;
+    font-size: 18px;
+    color: white;
+    width: 150px;
+    /*border-color: teal; */
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button#lev1.rules {
+    margin-top: 40px 0px 0px 0px;
+}
+
 button.rules:hover {
+    background-color: #08D;
+}
+
+button.rules.lit {
     background-color: #07C;
 }
+
+button.rules.unlit {
+    background-color: #05A;
+}
+
 
 .game-root {
     max-width: 570px;
