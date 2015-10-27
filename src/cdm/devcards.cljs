@@ -178,6 +178,10 @@ implementation.
 (defcard machine-2
   (core/cdm2))
 
+(defcard distinct4
+  (count (distinct (for [i (range 7)] (core/new-quadratic :lev1))))
+  )
+
 #_(defcard four-bulbs
   (core/four-bulbs [{:class "yellow" :state "off"}
                     {:class "red" :state "on"}

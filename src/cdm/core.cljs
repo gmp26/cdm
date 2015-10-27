@@ -41,49 +41,56 @@
 (declare handle-reload)
 (declare int-in-range)
 
+(defn choose-b
+  [a]
+  (cond
+    (= a 0)
+    (int-in-range 2 13)
+
+    (integer? a)
+    (int-in-range -5 6)
+
+    :else
+    (/  (inc (int-in-range 1 12)) 2)
+            ))
+(defn choose-c
+  [a b]
+  (if (= a 0)
+    (int-in-range 2 13)
+    (Math.round (+ (/ (* b b 0.25) a) (int-in-range -12 13)))))
 
 (defn new-quadratic
   "generate new random quadratic coefficients"
   [level]
-  (cond
-    (= level :lev3)
-    (let [a (/ (int-in-range -6 7) 2)]
-      {:a a
-       :b (if (integer? a)
-            (int-in-range -5 6)
-            (+ 0.5 (int-in-range -5 5)))
-       :c (int-in-range -20 21)})
+  (let [a (cond
+            (= level :lev3)
+            (/ (int-in-range -9 10) 2)
 
-    (= level :lev2)
-    (let [a (/ (int-in-range 0 5) 2)]
-      {:a a
-       :b (if (integer? a)
-            (int-in-range -5 6)
-            (+ 0.5 (int-in-range -5 5)))
-       :c (int-in-range -20 21)})
+            (= level :lev2)
+            (rand-nth [0 0.5 1 2 3])
 
-    :else
-    {:a 0
-     :b (int-in-range -10 11)
-     :c (int-in-range -20 21)}
-
-    ))
-
+            :else 0
+            )
+        b (choose-b a)
+        c (choose-c a b)
+        ]
+    (prn a b c)
+    {:a a :b b :c c}))
 
 (defn new-quadratics
-  "assoc a new set of rules onto given map for given level"
+  "assoc a new set of 4 distinct rules onto given map for given level"
   [level]
-  (conj {:level level}
-        {:yellow (new-quadratic level)
-         :red (new-quadratic level)
-         :blue (new-quadratic level)
-         :green (new-quadratic level)}))
+  (let [qrules (into [] (take 4 (distinct (map #(new-quadratic level) (range 7)))))]
+    (conj {:level level}
+          {:yellow (qrules 0)
+           :red (qrules 1)
+           :blue (qrules 2)
+           :green (qrules 3)})))
 
 (defn handle-reload [event level]
   (swap! game-state #(conj % (new-quadratics level)))
   (.preventDefault event)
-  (.stopPropagation event)
-  )
+  (.stopPropagation event))
 
 (rum/defc title []
   [:.title "Charlie's Delightful Machine"])
@@ -100,14 +107,15 @@
   "plus clicked"
   [event]
   (swap! game-state #(update % :n inc))
-  )
+  (.preventDefault event)
+  (.stopPropagation event))
 
 (defn handle-minus
   "minus clicked"
   [event]
   (swap! game-state #(update % :n dec))
-  )
-
+  (.preventDefault event)
+  (.stopPropagation event))
 
 (defn toggle-class
   "get a css class "
