@@ -161,6 +161,14 @@ input[type=number] {
     -moz-appearance:textfield;
 }
 
+
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .spinner button {
     background-color: #048;
     font-size: 18px;

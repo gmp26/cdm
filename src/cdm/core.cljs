@@ -72,9 +72,7 @@
             :else 0
             )
         b (choose-b a)
-        c (choose-c a b)
-        ]
-    (prn a b c)
+        c (choose-c a b)]
     {:a a :b b :c c}))
 
 (defn new-quadratics
@@ -93,10 +91,10 @@
   (.stopPropagation event))
 
 (rum/defc title []
-  [:.title "Charlie's Delightful Machine"])
+  [:.title.no-select "Charlie's Delightful Machine"])
 
 (rum/defc static-content []
-  [:p "Enter some whole numbers in the box and so discover the rules which switch on each of the lights."])
+  [:p.no-select "Enter some whole numbers in the box and so discover the rules which switch on each of the lights."])
 
 (defn handle-change [event]
   (let [n (int (.-value (.-target event)))]
@@ -122,8 +120,7 @@
   [level]
   (if (= (:level @game-state) level)
     "rules lit"
-    "rules")
-  )
+    "rules"))
 
 (rum/defc four-bulbs < rum/reactive [[a b c d]]
   [:.game-root
@@ -132,37 +129,33 @@
    (coloured-bulb (:class b) (:state b) 0)
    (coloured-bulb (:class c) (:state c) 0)
    (coloured-bulb (:class d) (:state d) 0)
-   [:.static
+   [:.static.no-select
     (static-content)
     [:.spinner
-     [:button.up {:on-click handle-plus
-                  :on-touch-end handle-plus} "+"]
-     [:button.down {on-click handle-minus
-                    on-touch-end handle-minus} "-"]
+     [:button.up.no-select {:on-click handle-plus
+                  :on-touch-start handle-plus} "+"]
+     [:button.down.no-select {on-click handle-minus
+                    on-touch-start handle-minus} "-"]
      [:input.num {:value (:n (rum/react game-state))
                   :type "number"
                   :pattern "\\d*"
-                  :on-change handle-change}]
-     ]
-
-    [:button#lev0 {:class (toggle-class :lev1)
+                  :on-change handle-change}]]
+    [:button#lev0.no-select {:class (toggle-class :lev1)
                          :on-click #(handle-reload % :lev1)
                          :on-touch-end #(handle-reload % :lev1)} "Level 1"]
-    [:button#lev1.rules {:class (toggle-class :lev2)
+    [:button#lev1.rules.no-select {:class (toggle-class :lev2)
                          :on-click #(handle-reload % :lev2)
                          :on-touch-end #(handle-reload % :lev2)} "Level 2"]
-    [:button#lev2.rules {:class (toggle-class :lev3)
+    [:button#lev2.rules.no-select {:class (toggle-class :lev3)
                          :on-click #(handle-reload % :lev3)
-                         :on-touch-end #(handle-reload % :lev3)} "Level 3"]
-]])
+                         :on-touch-end #(handle-reload % :lev3)} "Level 3"]]])
 
 (defn linear?
   "returns true if n = ka + b for some integer k"
   [n a b]
   (if (= a 0)
     (= n b)
-    (integer? (/ (- n b) a)))
-  )
+    (integer? (/ (- n b) a))))
 
 (def epsilon 1e-10)
 
@@ -184,9 +177,6 @@
     :else (let [root (Math.round (Math.sqrt n))]
             (< (Math.abs (- (* root root) n)) epsilon))))
 
-
-
-
 (defn disc [a b c]
   (- (* b b) (* 4 a c)))
 
@@ -207,8 +197,7 @@
 (defn int-in-range
   "return a function that generates an integer within [a,b)"
   [a b]
-  (+ a (rand-int (- b a)))
-  )
+  (+ a (rand-int (- b a))))
 
 (defn quadratic-list
   "List the numbers that are in the quadratic sequence where |a_k| < n-max"
@@ -218,16 +207,6 @@
                                                 neg (quadratic? (- k) a b c)]
                                           :when (or pos neg)]
                                       (if pos k (- k)))))))
-
-#_(defn random-quadratic-test-generator
-  "doc-string"
-  []
-  (let [a (int-in-range -3 4)
-        b (int-in-range -5 6)
-        c (int-in-range -20 21)]
-    (fn [n] (if (quadratic? n a b c) "on" "off"))))
-
-
 
 (defn bool->on-off
   [b]
@@ -249,14 +228,11 @@
     (four-bulbs [(bulb-state gs :yellow n)
                  (bulb-state gs :red n)
                  (bulb-state gs :blue n)
-                 (bulb-state gs :green n)
-                 ])))
-
+                 (bulb-state gs :green n)])))
 
  ;;
  ;; Put the app/game in here
  ;;
-
 (rum/defc game-container < rum/reactive []
   "Charlies Delightful Machine - 2"
   (cdm2))
@@ -275,68 +251,3 @@
 
 (defn on-js-reload []
   (swap! game-state update-in [:__figwheel_counter] inc))
-
-
-;;;;;;;;;;; defunct code ------>
-
-#_(rum/defc home < rum/reactive []
-  [:div.row
-])
-
-#_(rum/defc responsive-black-square [& content]
-  [:.black-square
-   content])
-
-
-#_(rum/defc coloured-light [class state]
-  (let [spec (str class " lamp")]
-    (responsive-black-square
-     (light spec state))))
-
-#_(rum/defc four-lights < rum/reactive [[a b c d]]
-  [:div.full-square
-   [:.quarter-square.top.left
-    (coloured-light (:class a) (:state a))]
-   [:.quarter-square.top.right
-    (coloured-light (:class b) (:state b))]
-   [:.quarter-square.bottom.left
-    (coloured-light (:class c) (:state c))]
-   [:.quarter-square.bottom.right
-    (coloured-light (:class d) (:state d))]
-   [:.static {:style {:zoom 0.8
-                      :right "28%"
-                      :top "28%"
-                      :border "none"}}
-    (static-content)
-    [:div {:on-wheel handle-wheel}
-     [:input.num {:value (:n (rum/react game-state))
-                  :type "number"
-                  :on-change handle-change
-                  }]]
-    [:button#lev0.rules {:on-click handle-reload
-                    :on-touch-end handle-reload} "Change rules"]
-    [:button#lev1.rules {:on-click handle-reload
-                    :on-touch-end handle-reload} "Change rules"]
-    [:button#lev2.rules {:on-click handle-reload
-                    :on-touch-end handle-reload} "Change rules"]
-    ]])
-
-#_(rum/defc cdm1 < rum/reactive []
-  (let [gs (rum/react game-state)
-        n (:n gs)
-        tests (:generators gs)]
-
-    (four-lights [{:class "yellow" :state ((tests 0) n)}
-                  {:class "red" :state ((tests 1) n)}
-                  {:class "green" :state ((tests 2) n)}
-                  {:class "blue" :state ((tests 3) n)}])))
-
-#_(defn random-quadratic-test-generator
-  "doc-string"
-  []
-  )
-
-#_(defn new-gen-set []
-  (vec (for [i (range 4)]
-         (random-quadratic-test-generator)
-         )))
