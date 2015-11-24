@@ -140,6 +140,10 @@
                   :type "number"
                   :pattern "\\d*"
                   :on-change handle-change}]]
+    [:p (condp = (:level (rum/react game-state))
+          :lev1 "Linear"
+          :lev2 "Linear or quadratic"
+          :lev3 "Linear or quadratic")]
     [:button#lev0.no-select {:class (toggle-class :lev1)
                          :on-click #(handle-reload % :lev1)
                          :on-touch-end #(handle-reload % :lev1)} "Level 1"]
@@ -148,7 +152,10 @@
                          :on-touch-end #(handle-reload % :lev2)} "Level 2"]
     [:button#lev2.rules.no-select {:class (toggle-class :lev3)
                          :on-click #(handle-reload % :lev3)
-                         :on-touch-end #(handle-reload % :lev3)} "Level 3"]]])
+                                   :on-touch-end #(handle-reload % :lev3)} "Level 3"]
+    [:p {:style {:clear "both"
+                 :padding-top "5px"
+                 }} "Pressing a level button generates a new rule"]]])
 
 (defn linear?
   "returns true if n = ka + b for some integer k"
