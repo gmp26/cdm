@@ -1,3 +1,7 @@
+body {
+    font-size: 18px !important;
+}
+
 .yellow {
     background-color: #fc0;
 }
@@ -195,7 +199,7 @@ button.rules {
     background-color: #048;
     font-size: 18px;
     color: white;
-    width: 150px;
+    width: 200px;
     /*border-color: teal; */
     border-radius: 5px;
     cursor: pointer;

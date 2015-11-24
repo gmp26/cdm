@@ -4,10 +4,8 @@
               [cljs.core.async :as async :refer [<! >! chan close! sliding-buffer put! alts! timeout]]
               [clojure.set :refer (intersection)]
               [cljsjs.react]
-              ;[jayq.core :refer ($)]
               )
     (:require-macros [cljs.core.async.macros :as m :refer [go alt!]])
-    ;(:require-macros [jayq.macros :refer [ready]])
 )
 
 (enable-console-print!)
@@ -18,7 +16,6 @@
 ;;;
 
 (defn el [id] (.getElementById js/document id))
-
 
 (defn pc [n] (str (.toFixed n 2) "%"))
 
@@ -140,13 +137,9 @@
                   :type "number"
                   :pattern "\\d*"
                   :on-change handle-change}]]
-    [:p (condp = (:level (rum/react game-state))
-          :lev1 "Linear"
-          :lev2 "Linear or quadratic"
-          :lev3 "Linear or quadratic")]
     [:button#lev0.no-select {:class (toggle-class :lev1)
                          :on-click #(handle-reload % :lev1)
-                         :on-touch-end #(handle-reload % :lev1)} "Level 1"]
+                         :on-touch-end #(handle-reload % :lev1)} "Level 1 - linear only"]
     [:button#lev1.rules.no-select {:class (toggle-class :lev2)
                          :on-click #(handle-reload % :lev2)
                          :on-touch-end #(handle-reload % :lev2)} "Level 2"]
@@ -154,8 +147,15 @@
                          :on-click #(handle-reload % :lev3)
                                    :on-touch-end #(handle-reload % :lev3)} "Level 3"]
     [:p {:style {:clear "both"
-                 :padding-top "5px"
-                 }} "Pressing a level button generates a new rule"]]])
+                 :padding-top "10px"
+                 }} "Pressing a level button generates a new rule"]
+    #_[:p {:style
+           {:color "#888"}}
+       (str (condp = (:level (rum/react game-state))
+              :lev1 "Linear "
+              :lev2 "Linear or quadratic"
+              :lev3 "Linear or quadratic") " rule selected")]
+]])
 
 (defn linear?
   "returns true if n = ka + b for some integer k"
